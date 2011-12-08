@@ -126,6 +126,13 @@ function! http#get(url, ...)
   endif
   if executable('curl')
     let command = 'curl -L -s -k -i '
+    if exists('g:webapi_socks_host')
+      let command .= "--socks5 " . g:webapi_socks_host
+      if exists('g:webapi_socks_port')
+        let command .= ":" . g:webapi_socks_port
+      endif
+      let command .= " "
+    endif
     let quote = &shellxquote == '"' ?  "'" : '"'
     for key in keys(headdata)
       if has('win32')
@@ -182,7 +189,15 @@ function! http#post(url, ...)
     let postdatastr = postdata
   endif
   if executable('curl')
-    let command = 'curl -L -s -k -i -X '.method
+    let command = 'curl -L -s -k -i '
+    if exists('g:webapi_socks_host')
+        let command .= "--socks5 " . g:webapi_socks_host
+        if exists('g:webapi_socks_port')
+            let command .= ":" . g:webapi_socks_port
+        endif
+        let command .= " "
+    endif
+    let command .= '-X ' . method
     let quote = &shellxquote == '"' ?  "'" : '"'
     for key in keys(headdata)
       if has('win32')
